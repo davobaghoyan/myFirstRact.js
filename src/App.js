@@ -1,22 +1,16 @@
 import logo from './logo.svg';
 import './App.css';
+import { Sum } from './sum';
+import { NewYearCalculator } from './HappyNewYear';
+import { Remainder } from './divisionRemainder';
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+      <Sum a = {10} b = {82}/>
+      <NewYearCalculator month = {10} day = {22}/>
+      <Remainder x = {85} y = {11}/>
       </header>
     </div>
   );
