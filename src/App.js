@@ -1,17 +1,20 @@
 import './App.css';
 import {Product} from './Product'
+import { ToDo } from './Homework_8/toDo';
+
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
+      <ToDo />
       <h3>Products</h3>
       <Product name = "Apple" 
       descriptionText = "Granny Smith" 
-      price = {1899}/>
+      amount = {2.9}/>
       <Product name = "Orange" 
       descriptionText = "Cara Cara" 
-      price = {2999}/>
+      amount = {4.2}/>
       </header>
     </div>
   );
