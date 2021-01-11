@@ -6,7 +6,7 @@ class Price extends Component{
 super(props);
 this.state = {
 currency:  "$",
-amount : this.props.amount
+amount : props.amount
 
 }
     }
