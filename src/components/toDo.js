@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Container, Row, Col, Button,Form, Card} from "react-bootstrap";
+import { Container, Row, Col, Button, Card, FormControl} from "react-bootstrap";
 import mystyles  from './todo.module.css';
 import idGenerator from  '../helpers/idGenerator';
 
@@ -8,7 +8,8 @@ class ToDo extends Component{
 
     state = {
         inputValue: "",
-        tasks: []
+        tasks: [],
+        selectedTasks: new Set()
     }
 handleChange = (event) => {
 this.setState({
@@ -18,9 +19,9 @@ this.setState({
 };
 
 handleClick = () => {
-    if(this.state.inputValue !== " ")
+    if(this.state.inputValue !== "")
     {
-        let tempTask = {
+        let tempTask = {  
             id : idGenerator(),
             title: this.state.inputValue
         }
@@ -38,29 +39,81 @@ this.setState({
 })})
 }
 
+selectTask = (id) => {
+    const selectedTasks = new Set(this.state.selectedTasks);
+    if (selectedTasks.has(id)){
+        selectedTasks.delete(id);
+    }
+    else{
+        selectedTasks.add(id);
+    }
+    this.setState({
+       selectedTasks
+    })
+}
+
+deleteSelected = () => {
+    console.log("deleteselected")
+    const{selectedTasks, tasks} = this.state;
+    this.setState({
+        tasks: tasks.filter( function(value, index, arr) {
+            return  !selectedTasks.has(value.id)
+              }),
+        selectedTasks: new Set()
+})
+}
+
+handleKeyDown = (e) =>{
+    if(e.key === "Enter"){
+        this.handleClick();
+    }
+}
+
     
 render(){
         return(
             <Container>
             <Row>
-            <Form>
-            <Form.Control placeholder = "Write description" type="text" value = {this.state.inputValue} onChange = {this.handleChange}/>
-            </Form>
-            <Button style = {{backgroundColor:'green', color: 'white'}} onClick = {this.handleClick}>Add Task</Button>
-            </Row>
-             <Row> 
-             {this.state.tasks.map((item, index) => <Col xl = {2} lg = {3} md = {4} key = {item.id}>
+            <FormControl 
+            placeholder = "Write description" 
+            value = {this.state.inputValue} 
+            onChange = {this.handleChange}
+            onKeyDown = {this.handleKeyDown}
+            disabled = {!!this.state.selectedTasks.size} />
+            <Button 
+            disabled = {!!this.state.selectedTasks.size} 
+            style = {{backgroundColor:'green', color: 'white'}} 
+            onClick = {this.handleClick}
+            >
+            Add Task
+            </Button>
+           </Row>             
+
+             <Row>   
+                 {this.state.tasks.map((item, index) => <Col xl = {2} lg = {3} md = {4} key = {item.id}>
              <Card className = {mystyles.task}>
-             <Card.Body>
+             <input type = "checkbox" onClick = {() => this.selectTask(item.id)}/>
+              <Card.Body>
                <Card.Title>Task #{index + 1}</Card.Title>
                <Card.Text>
                 {item.title}
                </Card.Text>
-               <Button variant="danger" onClick = {() => this.removeTask(item.id)}>Delete</Button>
+               <Button disabled = {!!this.state.selectedTasks.size} variant="danger" onClick = {() => this.removeTask(item.id)}>Delete</Button>
              </Card.Body>
-           </Card>             </Col>)} 
+            </Card>             </Col>)} 
              </Row>
-            </Container>
+            
+             <Row>
+             <Button 
+             variant="danger" 
+             onClick = {this.deleteSelected} 
+             disabled = {this.state.selectedTasks.size === 0}
+             > 
+             Delete Selected
+             </Button>
+             </Row>
+            
+             </Container>
         )
         }
     }
