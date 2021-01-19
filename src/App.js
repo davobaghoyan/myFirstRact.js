@@ -1,20 +1,13 @@
 import './App.css';
-import {Product} from './Product'
-import { ToDo } from './Homework_8/toDo';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { ToDo } from './components/toDo';
 
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
+    <div>
+      <header>
       <ToDo />
-      <h3>Products</h3>
-      <Product name = "Apple" 
-      descriptionText = "Granny Smith" 
-      amount = {2.9}/>
-      <Product name = "Orange" 
-      descriptionText = "Cara Cara" 
-      amount = {4.2}/>
       </header>
     </div>
   );
