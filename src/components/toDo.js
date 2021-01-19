@@ -53,7 +53,6 @@ selectTask = (id) => {
 }
 
 deleteSelected = () => {
-    console.log("deleteselected")
     const{selectedTasks, tasks} = this.state;
     this.setState({
         tasks: tasks.filter( function(value, index, arr) {
@@ -75,12 +74,14 @@ render(){
             <Container>
             <Row>
             <FormControl 
+            className = "mb-2"
             placeholder = "Write description" 
             value = {this.state.inputValue} 
             onChange = {this.handleChange}
             onKeyDown = {this.handleKeyDown}
             disabled = {!!this.state.selectedTasks.size} />
             <Button 
+            className = "mb-2"
             disabled = {!!this.state.selectedTasks.size} 
             style = {{backgroundColor:'green', color: 'white'}} 
             onClick = {this.handleClick}
