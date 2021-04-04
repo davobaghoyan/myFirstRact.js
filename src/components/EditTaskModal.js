@@ -1,15 +1,22 @@
-import React, {PureComponent} from 'react';
+import React, {PureComponent, createRef} from 'react';
 import { Button, FormControl, Modal } from 'react-bootstrap';
-import idGenerator from '../helpers/idGenerator';
 import PropTypes from 'prop-types'; 
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import {formatDate} from '../helpers/utils';
+import {editTask} from '../store/actions'
+import { connect } from 'react-redux';
 
 class EditTaskModal extends PureComponent{
     constructor(props){
         super(props);
-    this.state = {
+        this.state = {
         title: props.task.title,
-        description: props.task.description
+        description: props.task.description,
+        date: props.task.date ? new Date(props.task.date) : new Date(),
     };
+
+    this.inputRef = createRef();
     }
     
     
@@ -21,43 +28,39 @@ class EditTaskModal extends PureComponent{
         });
     };
 
-    handleKeyDown = (event) => {
-        if (event.key === "Enter") {
-            this.handleSubmit();
-        }
-    };
-
-    handleSubmit = ()=>{
-        const title = this.state.title.trim();
-        const description = this.state.description.trim();
-
-        if (!title) {
-            return;
-        }
-
-        const newTask = {
-            id: idGenerator(),
-            title,
-            description
-        };
-
-        this.props.addTask(newTask);
-    };
 
 
-    onSave = (t,d) =>{
+
+    onSave = (title,description,date) =>{
+      console.log(this.props.task._id)
     let editedTask = {
-    id:this.props.task.id,
-    title:t,
-    description:d
+    _id:this.props.task._id,
+    title:title,
+    description:description,
+    date: formatDate(date.toISOString())
 }
-this.props.onConfirm(editedTask)
+if(this.props.single === true){
+  console.log('sd')
+  this.props.onConfirm(editedTask)
+}
+else{
+this.props.editTask(editedTask)
+}
+    }
 
+    handleChangeDate=(value)=>{
+        this.setState({
+          date: value || new Date()
+        });
+      };
+
+      componentDidMount(){
+        this.inputRef.current.focus();
     }
 
     render(){
         const {onClose} = this.props;
-        const{title, description} = this.state;
+        const{title, description,date} = this.state;
         return(
             <div>
             <Modal
@@ -74,9 +77,9 @@ this.props.onConfirm(editedTask)
           <FormControl
             name='title'
             value = {title}
-            onKeyPress={this.handleKeyDown}
             onChange = {this.handleChange}
             className='mb-3'
+            ref = {this.inputRef}
           />
           <FormControl 
           value = {description}
@@ -84,14 +87,18 @@ this.props.onConfirm(editedTask)
           rows={5} 
           name='description'
           onChange={this.handleChange}
+         />
 
-          
+         <DatePicker 
+          minDate = {new Date()}
+          selected={this.state.date}
+          onChange={this.handleChangeDate}
           />
 
          </Modal.Body>
           <Modal.Footer>
             <Button 
-            onClick={() => this.onSave(title,description)}
+            onClick={() => this.onSave(title,description,date)}
             variant='success'
             >
             Save
@@ -109,8 +116,11 @@ this.props.onConfirm(editedTask)
     }
 }
 EditTaskModal.propTypes = {
-    addTask : PropTypes.func.isRequired,
     onClose:PropTypes.func.isRequired
 }
 
-export default EditTaskModal;
+const mapDispatchToProps = {
+  editTask
+}
+
+export default connect(null,mapDispatchToProps)(EditTaskModal);
