@@ -1,12 +1,22 @@
-import React, {PureComponent} from 'react';
+import React, {PureComponent, createRef} from 'react';
 import { Button, FormControl, Modal } from 'react-bootstrap';
-import idGenerator from '../../helpers/idGenerator';
 import PropTypes from 'prop-types'; 
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import {formatDate} from '../../helpers/utils';
+import {connect} from 'react-redux';
+import {addTask} from '../../store/actions';
 
 class NewTask extends PureComponent{
-    state = {
+  constructor(props){
+    super(props);
+    this.inputRef = createRef()
+  }
+    
+  state = {
         title: '',
-        description: ''
+        description: '',
+        date: new Date()
     };
 
     handleChange = (event) => {
@@ -30,16 +40,28 @@ class NewTask extends PureComponent{
         if (!title) {
             return;
         }
+      const{date} = this.state
 
         const newTask = {
-            id: idGenerator(),
             title,
-            description
+            description,
+            date: formatDate(date.toISOString())
+
         };
 
         this.props.addTask(newTask);
     };
 
+    handleChangeDate=(value)=>{
+        this.setState({
+          date: value || new Date()
+        });
+      };
+      
+      componentDidMount(){
+        this.inputRef.current.focus();
+    }
+    
     render(){
         const {onClose} = this.props;
 
@@ -59,11 +81,13 @@ class NewTask extends PureComponent{
           <FormControl
               placeholder="Title"
               onChange={this.handleChange}
-            name='title'
+              name='title'
               onKeyPress={this.handleKeyDown}
               className='mb-3'
-          />
-          <FormControl 
+              ref = {this.inputRef}
+           />
+         
+           <FormControl 
           placeholder="Description"
           as="textarea" 
           rows={5} 
@@ -71,6 +95,12 @@ class NewTask extends PureComponent{
           onChange={this.handleChange}
 
           
+          />
+
+          <DatePicker 
+          minDate = {new Date()}
+          selected={this.state.date}
+          onChange={this.handleChangeDate}
           />
 
          </Modal.Body>
@@ -81,8 +111,14 @@ class NewTask extends PureComponent{
             >
             Add
             </Button>
-            <Button onClick={onClose}>Cancel</Button>
-          </Modal.Footer>
+            
+            <Button 
+            onClick={onClose}
+            >
+            Cancel
+            </Button>
+         
+            </Modal.Footer>
         </Modal>
 </div>
         );
@@ -93,4 +129,8 @@ NewTask.propTypes = {
     onClose:PropTypes.func.isRequired
 }
 
-export default NewTask;
+const mapDispatchToProps =  {
+  addTask
+};
+
+export default connect(null,mapDispatchToProps)(NewTask);

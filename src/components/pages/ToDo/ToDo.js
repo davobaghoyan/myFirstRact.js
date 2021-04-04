@@ -1,17 +1,14 @@
 import React, { PureComponent } from "react";
 import { Container, Row, Col, Button} from "react-bootstrap";
-import Task from '../Task/Task';
-import NewTask from '../NewTask/NewTask' 
-import Confirm from '../Confirm';
-import EditTaskModal from '../EditTaskModal';
-import { connect } from 'react-redux';
-import { getTasks, deleteTask, deleteTasks,editTask,addTask } from '../../../store/actions';
+import Task from '../../Task/Task';
+import NewTask from '../../NewTask/NewTask' 
+import Confirm from '../../Confirm';
+import EditTaskModal from '../../EditTaskModal';
+import {getTasks,deleteTask,deleteTasks} from '../../../store/actions'
+import {connect} from 'react-redux';
+import Search from '../../Search/Search';
 
-
-
-//OLD TODO VERSION
-
-class ToDo extends PureComponent{
+ class ToDo extends PureComponent{
 
     state = {
         inputValue: "",
@@ -24,24 +21,43 @@ class ToDo extends PureComponent{
     }
 
 
-handleChange = (event) => {
- this.setState({
+    handleChange = (event) => {
+    this.setState({
     inputValue: event.target.value
 }
 );
 };
 
-handleClick = (tempTask) => {
-this.props.addTask(tempTask)
-            }
+
 
 componentDidMount(){
-    this.props.getTasks();
+   this.props.getTasks()
+
 }
 
-removeTask = (taskId) => {
-     this.props.deleteTask(taskId)
-    };
+componentDidUpdate(prevProps) {
+    if (!prevProps.opendAddTask && this.props.opendAddTask){
+        this.setState({
+            openNewTaskModal: false
+        });
+        return;
+    }
+
+    if (!prevProps.deleteTasksSuccess && this.props.deleteTasksSuccess){
+        this.setState({
+            selectedTasks: new Set(),
+            showConfirm: false
+        });
+        return;
+    }
+    if (!prevProps.editTasksSuccess && this.props.editTasksSuccess){
+        this.setState({
+            openEdit:false
+        });
+        return;
+    }
+}
+
 
 selectTask = (id) => {
     const selectedTasks = new Set(this.state.selectedTasks);
@@ -56,11 +72,6 @@ selectTask = (id) => {
     })
 }
 
-deleteSelected = () => {
-    const { selectedTasks } = this.state;
-        this.props.deleteTasks(selectedTasks);
-
-};
 
 handleKeyDown = (e) =>{
     if(e.key === "Enter"){
@@ -88,18 +99,13 @@ this.setState({
 })
 }
 
-confirmEditedTask = (editedTask) => {
-   this.props.editedTask(editedTask)
-};
 
-
-    
 render(){
-    const tasks = this.state.tasks.map((t) => {
+    const tasks = this.props.tasks.map((t) => {
         return (
             <Col 
             key = {t._id}
-            xs={12}
+            xs={10}
             sm={6}
             md={4}
             lg={3}
@@ -109,7 +115,7 @@ render(){
             onOpenEdit = {this.onOpenEdit}
             onSelect = {this.selectTask}
             selectedTasks = {this.state.selectedTasks}
-            deleteTask = {this.removeTask}
+            deleteTask = {this.props.deleteTask}
             />
             </Col>
         )
@@ -117,6 +123,9 @@ render(){
         return(
             <div>
             <Container>
+            <Row>
+            <Search/>
+            </Row>
              <Row>   
              <Col>
              <Button
@@ -147,7 +156,7 @@ render(){
              {this.state.showConfirm &&
                 <Confirm
                     onClose={this.toggleConfirm}
-                    onConfirm={this.deleteSelected}
+                    onConfirm={() => this.props.deleteTasks(this.state.selectedTasks)}
                     count={this.state.selectedTasks.size}
                 />
             }
@@ -161,30 +170,27 @@ render(){
             {this.state.openEdit &&
             <EditTaskModal
             task = {this.state.taskToBeEdited}
-            onClose = {this.onOpenEdit}
-            onConfirm = {this.confirmEditedTask}
-            
+            onClose = {this.onOpenEdit}            
         />}
             </div>
 
         )
         }
     }
-    const mapStateToProps = (state) => {
+
+    const mapStateToProps = (state) =>{
         return {
-            tasks: state.tasks,
-            addTaskSuccess: state.addTaskSuccess,
-            deleteTasksSuccess: state.deleteTasksSuccess,
-            editTasksSuccess: state.editTasksSuccess
-        };
-    };
-    
+            opendAddTask: state.addTaskSuccess,
+            deleteTasksSuccess:state.deleteTasksSuccess,
+            editTasksSuccess: state.editTasksSuccess,
+            tasks:state.tasks
+        }
+    }
+
     const mapDispatchToProps = {
         getTasks,
         deleteTask,
-        deleteTasks,
-        addTask,
-        editTask
-    };
-    
-    export default connect(mapStateToProps, mapDispatchToProps)(ToDo);
+        deleteTasks
+    }
+
+    export default connect(mapStateToProps,mapDispatchToProps)(ToDo)
