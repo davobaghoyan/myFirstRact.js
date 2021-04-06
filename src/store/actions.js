@@ -11,6 +11,10 @@ export function getTasks(params = {}){
         request(`${apiHost}/task?${query}`)
         .then((tasks)=>{
         dispatch({type: 'GET_TASKS', tasks: tasks});
+        request(`${apiHost}/user`)
+               .then((res)=>{
+                   dispatch({type:'GET_USER_INFO',res});
+                   })
         }).catch((error) => {
             dispatch({type:'ERROR',message:error.message})
         });;
@@ -59,6 +63,8 @@ export function deleteTasks(taskIds){
     }
 }
 
+
+
 export function editTask(data,from){
     return function(dispatch){
         dispatch({type: 'PENDING'});
@@ -73,9 +79,15 @@ export function editTask(data,from){
 
 export function getTask(id){
 return function (dispatch){
+    
     dispatch({type: 'PENDING'});
+    request(`${apiHost}/user`)
+               .then((res)=>{
+                   dispatch({type:'GET_USER_INFO',res});
+                   })
     request(`${apiHost}/task/${id}`)
-    .then((task) => dispatch({type:'GET_TASK',task})).catch((error) => {
+    .then((task) => dispatch({type:'GET_TASK',task}
+    )).catch((error) => {
     dispatch({type:'ERROR',message:error.message})
 });
 }
@@ -110,7 +122,10 @@ export function login(data) {
                    type:'LOGIN'
                })
                history.push('/home')
-
+               request(`${apiHost}/user`)
+               .then((res)=>{
+                   dispatch({type:'GET_USER_INFO',res});
+                   })
             })
             .catch((err) => {
                 dispatch({
@@ -120,4 +135,34 @@ export function login(data) {
             });
     }
 }
+
+export function sendContact(data) {
+    return function (dispatch) {
+        dispatch({ type: 'PENDING' });
+        requestWithoutToken(`${apiHost}/form`, 'POST', data)
+        .then(async (response) => {
+            dispatch({type:'SEND_CONTACT'})
+                }
+            ).catch((err) => {
+                dispatch({
+                    type: 'ERROR',
+                    message: err.message
+                });
+            });
+    }
+}
+
+
+export function GetUserInfo(){
+    return function(dispatch){
+        dispatch({type: 'PENDING'});
+        request(`${apiHost}/user`)
+        .then((res)=>{
+            dispatch({type:'GET_USER_INFO',res});
+            }).catch((error) => {
+                dispatch({type:'ERROR',message:error.message})
+            });;
+    }
+}
+
 
