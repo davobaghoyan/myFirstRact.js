@@ -11,6 +11,7 @@ import {getTask,deleteTask,editTask} from '../../../store/actions'
     state={
         openEditModal: false
     };
+ 
 
     componentDidMount(){
         const taskId = this.props.match.params.taskId;
@@ -24,10 +25,10 @@ import {getTask,deleteTask,editTask} from '../../../store/actions'
 
     handleSaveTask = (editedTask)=>{
         
-        this.props.editTask(editedTask,'single')  
-        this.setState({
-            openEditModal: false
-        });
+        this.props.editTask(editedTask,'single')
+       this.setState({
+           openEditModal:!this.props.editTasksSuccess
+       })
     };
 
     toggleEditModal = ()=>{
@@ -56,6 +57,9 @@ render(){
                 </Card.Text>
                 <Card.Text>
                 Date: {formatDate(task.date)}
+            </Card.Text>
+            <Card.Text>
+            Created at: {formatDate(task.created_at)}
             </Card.Text>
             {
                 task.status==="active" ?
@@ -125,6 +129,7 @@ render(){
 
 const mapStateToProps = (state) => {
 return {
+    editTasksSuccess:state.editTasksSuccess,
     task:state.task
 }
 }

@@ -1,11 +1,12 @@
 import React, {useState} from 'react';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import styles from './contactStyle.module.css';
+import {connect} from 'react-redux';
+import {sendContact} from '../../../store/actions'
 
 const requiredErrorMessage = 'Field is required';
 
-
-export default function Contact() {
+ function Contact(props) {
 const [values, setValues] = useState({
     name: '',
     email: '',
@@ -59,37 +60,13 @@ const handleSubmit = ()=>{
     const valuesExist = !valuesArr.some(el => el==='');
 
     if(valuesExist && !erorsExist){
-        
-        fetch('http://localhost:3001/form', {
-            method: 'POST',
-            body: JSON.stringify(values),
-            headers: {
-                "Content-Type": 'application/json'
-            }
-        })
-            .then(async (response) => {
-                const res = await response.json();
-
-                if(response.status >=400 && response.status < 600){
-                    if(res.error){
-                        throw res.error;
-                    }
-                    else {
-                        throw new Error('Something went wrong!');
-                    }
-                }
-                
-                console.log('Form sent successfully');
-                setValues({
-                    name: '',
-                    email: '',
-                    message: ''
-                });
-
-            })
-            .catch((error)=>{
-                console.log('catch error', error);
-            });
+        props.sendContact(values)
+       if(props.sendContact)
+       setValues({
+        name: '',
+        email: '',
+        message: ''
+    });
 
         return;
     }
@@ -168,3 +145,16 @@ const handleSubmit = ()=>{
         </Container>
     );
 };
+
+const mapStateToProps = (state) => {
+    return {
+         succes:state.sendContactSucces
+    }
+    }
+    
+    const mapDispatchToProps = {
+      sendContact,
+    
+    }
+    
+    export default connect(mapStateToProps,mapDispatchToProps)(Contact)

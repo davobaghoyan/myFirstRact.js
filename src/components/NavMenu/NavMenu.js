@@ -8,14 +8,17 @@ import {logout} from '../../helpers/storage'
 
 
 
- function NavMenu(props){
+
+ 
+function NavMenu(props){
+  console.log(props.isAuthenticated)
     return(
       <Container>
       <Row>
       <Navbar bg="light" variant="dark">
       <Nav>
       {props.isAuthenticated && 
-        <Col xs = {7}>
+        <Col xs = {4}>
         <NavLink 
         to='/' 
         activeClassName={styles.active}
@@ -27,7 +30,7 @@ import {logout} from '../../helpers/storage'
       }
     
         
-        <Col xs = {7}>
+        <Col xs = {4}>
         <NavLink
          to='/about'
          activeClassName={styles.active}
@@ -37,7 +40,7 @@ import {logout} from '../../helpers/storage'
           </NavLink>
         </Col>
           
-        <Col xs = {7}>
+        <Col xs = {4}>
         <NavLink
          to='/contact'
          activeClassName={styles.active}
@@ -47,8 +50,14 @@ import {logout} from '../../helpers/storage'
          </NavLink>
        </Col>
        
+       {props.isAuthenticated &&
+        <Col xs = {4}>
+       <h3>{props.user.name}</h3>
+       <h3>{props.user.surname}</h3>
+        </Col>
+       }
        {!props.isAuthenticated &&
-       <Col xs = {7}>
+       <Col xs = {4}>
        <NavLink
        to='/login'
        activeClassName={styles.active}
@@ -60,7 +69,7 @@ import {logout} from '../../helpers/storage'
        }
 
        {!props.isAuthenticated &&
-       <Col xs = {7}>
+       <Col xs = {4}>
        <NavLink
        to='/register'
        activeClassName={styles.active}
@@ -72,7 +81,7 @@ import {logout} from '../../helpers/storage'
       }
 
       {props.isAuthenticated &&
-        <Col xs = {7}>
+        <Col xs = {4}>
         <Button onClick = {logout}>
         Log Out
         </Button>
@@ -88,7 +97,9 @@ import {logout} from '../../helpers/storage'
 
 const mapStateToProps = (state) => {
 return {
-  isAuthenticated:state.isauthenticated
+  isAuthenticated:state.isauthenticated,
+  user:state.user
 }
 }
+
 export default connect(mapStateToProps)(NavMenu)

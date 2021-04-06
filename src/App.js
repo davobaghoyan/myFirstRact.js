@@ -106,6 +106,10 @@ function App({loading, successMessage,errorMessage,isAuthenticated}) {
 
     { loading && <Spinner />}
     <ToastContainer/>
+    <footer>
+  <p>Author: Davit Baghoyan</p>
+  <p><a href="https://github.com/davobaghoyan">GitHub</a></p>
+</footer>
     </div>
   );
 }

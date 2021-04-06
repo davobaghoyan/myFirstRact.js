@@ -14,12 +14,14 @@ function Register(props) {
         surname: ''
     });
     const [errors, setErrors] = useState({
+        name:null,
+        surname:null,
         email: null,
         password: null,
         confirmPassword: null
     });
     const handleSubmit = () => {
-        const {email, password, confirmPassword} = values;
+        const {name,surname,email, password, confirmPassword} = values;
         let valid = true;
             let passwordMessage = null;
         if(!confirmPassword){
@@ -31,6 +33,8 @@ function Register(props) {
                 valid = false;
         }
         setErrors({
+            name: name ? null : 'Name is required',
+            surname: surname ? null : 'Surname is required',
             email: email ? null : 'Email is required',
             confirmPassword: passwordMessage,
             password: password ? null : 'Password is required'
@@ -40,6 +44,8 @@ function Register(props) {
             console.log(values);
         }
     };
+
+
     const handleChange = ({ target: { name, value } }) => {
         setValues({
             ...values,
@@ -59,23 +65,33 @@ function Register(props) {
                             <h3 className={styles.heading}>Register</h3>
                             <Form.Group>
                             <Form.Control
-                            // className={errors.email? styles.invalid: ''}
+                            className={errors.name? styles.invalid: ''}
                             type="text"
                             name="name"
                             placeholder="Enter your name"
                             value={values.name}
                             onChange={handleChange}
                         />
+                        {
+                            <Form.Text className="text-danger" >
+                            {errors.name}
+                        </Form.Text>
+                        }
                         </Form.Group>
                         <Form.Group>
                         <Form.Control
-                        // className={errors.email? styles.invalid: ''}
+                        className={errors.surname? styles.invalid: ''}
                         type="text"
                         name="surname"
                         placeholder="Enter your surname"
                         value={values.surname}
                         onChange={handleChange}
                     />
+                    {
+                        <Form.Text className="text-danger" >
+                        {errors.surname}
+                    </Form.Text>
+                    }
                     </Form.Group>
                     <Form.Group>
                                 <Form.Control

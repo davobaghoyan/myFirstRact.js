@@ -7,10 +7,12 @@ const defaultState = {
     addTaskSuccess: false,
     deleteTasksSuccess: false,
     editTasksSuccess:false,
+    sendContactSucces:false,
     loading:false,
     successMessage:'',
     errorMessage:'',
-    isauthenticated:checkLoginStatus()
+    isauthenticated:checkLoginStatus(),
+    user:''
 };
 
 
@@ -34,6 +36,7 @@ export default function reducer(state=defaultState, action){
         };
       }
       case 'PENDING':{
+        console.log(state.user)
         return {
           ...state,
           addTaskSuccess: false,
@@ -49,6 +52,7 @@ export default function reducer(state=defaultState, action){
         return {
           ...state,
           errorMessage:action.message,
+          editTasksSuccess:false,
           loading:false
         };
       }
@@ -147,7 +151,22 @@ export default function reducer(state=defaultState, action){
             
                     };
                       }
-
+                      case 'SEND_CONTACT':{
+                        return {
+                          ...state,
+                          loading:false,
+                          sendContactSucces:true,
+                          successMessage: 'Your message was sent succesfully'
+                        };
+                          }
+                  case 'GET_USER_INFO':{
+                    console.log(action.res)
+                    return {
+                        ...state,
+                        loading:false,
+                        user: action.res
+                       };
+                       }
     
 
       default: return state;

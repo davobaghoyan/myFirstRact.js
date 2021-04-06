@@ -28,6 +28,9 @@ class Task extends PureComponent{
                <Card.Text>
                Date: {formatDate(task.date)}
                </Card.Text>
+               <Card.Text>
+               Created at: {formatDate(task.created_at)}
+               </Card.Text>
                {
                 task.status==="active" ?
                                 <Button

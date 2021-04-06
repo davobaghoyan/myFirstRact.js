@@ -32,7 +32,6 @@ class EditTaskModal extends PureComponent{
 
 
     onSave = (title,description,date) =>{
-      console.log(this.props.task._id)
     let editedTask = {
     _id:this.props.task._id,
     title:title,
@@ -40,7 +39,6 @@ class EditTaskModal extends PureComponent{
     date: formatDate(date.toISOString())
 }
 if(this.props.single === true){
-  console.log('sd')
   this.props.onConfirm(editedTask)
 }
 else{
